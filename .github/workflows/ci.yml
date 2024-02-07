@@ -8,7 +8,7 @@ on:
         required: true
         default: 'info'
   push:
-    branches: [ main ]
+    branches: [ main, live-project ]
   pull_request:
     branches: [ main ]
 
@@ -51,9 +51,17 @@ jobs:
           echo -e "Execution Fail!"
           exit 1
         fi
-        resp=$(curl http://localhost:8001/find_rate -X POST -d "12345")
+        resp=$(curl http://localhost:8001/find_rate -X POST -d "89102")
         echo "$resp"
-        if [[ $resp == "0.08" ]]; then
+        if [[ $resp == "0.08375" ]]; then
+          echo -e "Execution Success!"
+        else
+          echo -e "Execution Fail!"
+          exit 1
+        fi
+        resp=$(curl  http://localhost:8001/find_rate -w "%{http_code}" -X POST -d "invalid")
+        echo "$resp"
+        if [[ $resp == "404" ]]; then
           echo -e "Execution Success!"
         else
           echo -e "Execution Fail!"
